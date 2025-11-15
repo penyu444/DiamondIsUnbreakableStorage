@@ -5,29 +5,36 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Part 3 - Stardust Crusaders</title>
 
-<!-- PDF.js (same major version as your PhantomBlood) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js"></script>
 
 <style>
-  :root{
-    --gold: #d8ba10;
-    --bg1: #000000;
-    --bg2: #141414;
-    --card: #0f0f0f;
-    --hover-purple: #cdb7ff; /* pale purple on hover */
+  :root {
+    --purple-dark: #3a0066;
+    --purple-mid: #50008f;
+    --lavender: #f2d9ff;
+    --pink: #ffb6e6;
+    --yellow: #ffd447;
+    --border-pink: #ff6cb2;
   }
 
-  html,body { height:100%; margin:0; font-family: Arial, Helvetica, sans-serif; background: radial-gradient(circle at top, var(--bg2) 0%, var(--bg1) 100%); color: white; overflow-y: auto; -webkit-font-smoothing:antialiased; }
+  html, body {
+    height:100%;
+    margin:0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--lavender);
+    color: #000;
+    overflow-y: auto;
+    -webkit-font-smoothing: antialiased;
+  }
 
   header {
-    background: linear-gradient(90deg, #0b0b0b, #1a1a1a);
+    background: var(--purple-dark);
     padding: 20px;
     text-align: center;
     font-size: 28px;
     font-weight: 700;
-    color: var(--gold);
-    border-bottom: 4px solid var(--gold);
-    box-shadow: 0 6px 24px rgba(0,0,0,0.6);
+    color: var(--pink);
+    border-bottom: 4px solid var(--pink);
     position: sticky;
     top:0;
     z-index: 10;
@@ -35,9 +42,10 @@
 
   .subheader {
     text-align:center;
-    color: #d9c97a;
+    color: var(--purple-dark);
     margin-top:6px;
     font-size:14px;
+    font-weight: bold;
     opacity:.9;
   }
 
@@ -49,20 +57,25 @@
   }
 
   .btn {
-    background:#111;
-    color:var(--gold);
-    border:2px solid var(--gold);
+    background: var(--purple-dark);
+    color: var(--pink);
+    border: 2px solid var(--pink);
     padding:10px 14px;
     border-radius:8px;
     cursor:pointer;
     font-weight:600;
     transition:all .18s ease;
   }
-  .btn:hover{ background: #1a1a1a; box-shadow:0 6px 18px rgba(205,183,255,0.12); color:var(--hover-purple); border-color:var(--hover-purple); }
+
+  .btn:hover {
+    background: var(--purple-mid);
+    color: var(--yellow);
+    border-color: var(--yellow);
+  }
 
   .grid {
     display:grid;
-    grid-template-columns: repeat( auto-fit, minmax(220px, 1fr) );
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap:18px;
     padding:20px;
     max-width:1200px;
@@ -70,17 +83,17 @@
   }
 
   .volume-card {
-    background: var(--card);
+    background: #fff;
     border-radius: 12px;
     overflow: hidden;
-    border: 2px solid rgba(255,255,255,0.03);
+    border: 2px solid var(--border-pink);
     cursor: pointer;
     transition: transform .15s ease, box-shadow .15s ease;
   }
+
   .volume-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 18px 30px rgba(77,46,146,0.14);
-    outline: 3px solid rgba(205,183,255,0.08);
+    box-shadow: 0 0 14px rgba(0, 255, 255, 0.45);
   }
 
   .volume-card img {
@@ -96,12 +109,11 @@
   .volume-title {
     padding:12px;
     text-align:center;
-    color: var(--gold);
+    color: var(--purple-dark);
     font-weight:700;
     font-size:15px;
   }
 
-  /* Reader overlay (inline pdf) */
   #reader {
     display:none;
     position:fixed;
@@ -114,13 +126,12 @@
   }
 
   #pdf-canvas {
-    max-width: 96%;
-    max-height: 84%;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+    max-width:96%;
+    max-height:84%;
+    box-shadow:0 12px 40px rgba(0,0,0,0.6);
     background:#fff;
   }
 
-  /* back/home buttons inside reader */
   .reader-topbar {
     position:absolute;
     top:12px;
@@ -136,13 +147,12 @@
     border-radius:6px;
   }
 
-  /* page info bottom-right */
   #page-info {
     position:absolute;
     right:14px;
     bottom:14px;
-    background: rgba(216,186,16,0.14);
-    color: var(--gold);
+    background: rgba(255,182,230,0.18);
+    color: var(--pink);
     padding:8px 12px;
     border-radius:8px;
     font-weight:600;
@@ -150,18 +160,17 @@
     backdrop-filter: blur(2px);
   }
 
-  /* Tap zones for next/prev but keep top area free for buttons */
   .nav-zone {
     position:absolute;
-    top:72px; /* leave space for the topbar */
+    top:72px;
     bottom:0;
     width:50%;
     z-index:999990;
   }
+
   #prev-zone { left:0; }
   #next-zone { right:0; }
 
-  /* small responsive tweaks */
   @media (max-width:640px){
     header{font-size:20px}
     .volume-card img{height:220px}
@@ -172,115 +181,123 @@
 </head>
 <body>
 
-<header>Stardust Crusaders — Part 3</header>
-<div class="subheader">Jotaro Kujo’s Stand Awakens</div>
+<header>Diamond Is Unbreakable — Part 4</header>
 
 <div class="controls">
   <button class="btn" onclick="goHome()">🏠 Home</button>
-  <button class="btn" onclick="history.back()">← Back</button>
 </div>
 
 <main class="grid" id="volume-list">
-  <!-- Volume cards (click will open inline PDF reader) -->
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 29 - Enter Josuke Higashikata.pdf')">
-    <img src="vol13cover.png" alt="Vol 13">
-    <div class="volume-title">Stardust Crusaders – Volume 13</div>
-  </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 3 - Volume 14 - The Empty Ship and the Ape.pdf')">
-    <img src="vol14cover.png" alt="Vol 14">
-    <div class="volume-title">Stardust Crusaders – Volume 14</div>
-  </div>
+    <!-- GENERATED VOLUME CARDS BELOW -->
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 3 - Volume 15 - The Gun is Mightier than the Sword.pdf')">
-    <img src="vol15cover.png" alt="Vol 15">
-    <div class="volume-title">Stardust Crusaders – Volume 15</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 29 - Enter Josuke Higashikata.pdf')">
+        <img class="thumbnail" src="vol29cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 29</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 3 - Volume 16 - Battle Apprentice!.pdf')">
-    <img src="vol16cover.png" alt="Vol 16">
-    <div class="volume-title">Stardust Crusaders – Volume 16</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 30 - Okuyasu and Keicho Nijimura.pdf')">
+        <img class="thumbnail" src="vol30cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 30</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 3 - Volume 17 - Terrifying Lovers.pdf')">
-    <img src="vol17cover.png" alt="Vol 17">
-    <div class="volume-title">Stardust Crusaders – Volume 17</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 31 - Koichi Hirose (Echoes).pdf')">
+        <img class="thumbnail" src="vol31cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 31</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 3 - Volume 18 - A Dream of Death Thirteen.pdf')">
-    <img src="vol18cover.png" alt="Vol 18">
-    <div class="volume-title">Stardust Crusaders – Volume 18</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 32 - Yamagishi Yukako is in Love.pdf')">
+        <img class="thumbnail" src="vol32cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 32</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 3 - Volume 19 - The Magic Lamp.pdf')">
-    <img src="vol19cover.png" alt="Vol 19">
-    <div class="volume-title">Stardust Crusaders – Volume 19</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 33 - Let_s Go Out For Italian.pdf')">
+        <img class="thumbnail" src="vol33cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 33</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 3 - Volume 20 - The Exploding Orange.pdf')">
-    <img src="vol20cover.png" alt="Vol 20">
-    <div class="volume-title">Stardust Crusaders – Volume 20</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 34 - Let_s Go Play at the Mangaka_s House.pdf')">
+        <img class="thumbnail" src="vol34cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 34</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 3 - Volume 21 - The Woman_s Legs Are Her Weapon.pdf')">
-    <img src="vol21cover.png" alt="Vol 21">
-    <div class="volume-title">Stardust Crusaders – Volume 21</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 35 - Kishibe Rohan_s Adventure.pdf')">
+        <img class="thumbnail" src="vol35cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 35</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 3 - Volume 22 - Disappearance in a Locked Room.pdf')">
-    <img src="vol22cover.png" alt="Vol 22">
-    <div class="volume-title">Stardust Crusaders – Volume 22</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 36 - Shigechi_s Harvest.pdf')">
+        <img class="thumbnail" src="vol36cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 36</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 3 - Volume 23 - D_arby_s Collection.pdf')">
-    <img src="vol23cover.png" alt="Vol 23">
-    <div class="volume-title">Stardust Crusaders – Volume 23</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 37 - Yoshikage Kira Wants a Quiet Life.pdf')">
+        <img class="thumbnail" src="vol37cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 37</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 3 - Volume 24 - The Gatekeeper of Hell, Pet Shop.pdf')">
-    <img src="vol24cover.png" alt="Vol 24">
-    <div class="volume-title">Stardust Crusaders – Volume 24</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 38 - Sheer Heart Attack.pdf')">
+        <img class="thumbnail" src="vol38cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 38</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 3 - Volume 25 - D_arby the Player.pdf')">
-    <img src="vol25cover.png" alt="Vol 25">
-    <div class="volume-title">Stardust Crusaders – Volume 25</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 39 - Father_s Tears.pdf')">
+        <img class="thumbnail" src="vol39cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 39</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 3 - Volume 26 - The Mist of Emptiness, Vanilla Ice.pdf')">
-    <img src="vol26cover.png" alt="Vol 26">
-    <div class="volume-title">Stardust Crusaders – Volume 26</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 40 - RPS Kid is Coming!.pdf')">
+        <img class="thumbnail" src="vol40cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 40</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 3 - Volume 27 - DIO_s World.pdf')">
-    <img src="vol27cover.png" alt="Vol 27">
-    <div class="volume-title">Stardust Crusaders – Volume 27</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 41 - Highway Star.pdf')">
+        <img class="thumbnail" src="vol41cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 41</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 3 - Volume 28 - The Faraway Journey, Farewell Friends.pdf')">
-    <img src="vol28cover.png" alt="Vol 28">
-    <div class="volume-title">Stardust Crusaders – Volume 28</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 42 - The Cat Likes Yoshikage Kira.pdf')">
+        <img class="thumbnail" src="vol42cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 42</div>
+    </div>
+
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 43 - Enigma is a Mystery!.pdf')">
+        <img class="thumbnail" src="vol43cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 43</div>
+    </div>
+
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 44 - My Dad is Not My Dad.pdf')">
+        <img class="thumbnail" src="vol44cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 44</div>
+    </div>
+
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 45 - Another One Bites The Dust.pdf')">
+        <img class="thumbnail" src="vol45cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 45</div>
+    </div>
+
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 46 - Crazy Diamond is Unbreakable.pdf')">
+        <img class="thumbnail" src="vol46cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 46</div>
+    </div>
+
 </main>
 
-<!-- Inline PDF reader overlay -->
 <div id="reader" role="dialog" aria-hidden="true">
   <div class="reader-topbar">
     <button class="btn" onclick="closePDF()">← Close</button>
     <button class="btn" onclick="goHome()">🏠 Home</button>
   </div>
 
-  <canvas id="pdf-canvas" aria-label="PDF canvas"></canvas>
+  <canvas id="pdf-canvas"></canvas>
 
-  <div id="prev-zone" class="nav-zone" onclick="prevPage()" title="Previous page (left tap)"></div>
-  <div id="next-zone" class="nav-zone" onclick="nextPage()" title="Next page (right tap)"></div>
+  <div id="prev-zone" class="nav-zone" onclick="prevPage()"></div>
+  <div id="next-zone" class="nav-zone" onclick="nextPage()"></div>
 
   <div id="page-info">Page 0 / 0</div>
 </div>
 
 <script>
-
-
 let pdfDoc = null;
 let pageNum = 1;
 const scale = 1.5;
@@ -290,28 +307,23 @@ const reader = document.getElementById('reader');
 const pageInfo = document.getElementById('page-info');
 const volumeList = document.getElementById('volume-list');
 
-/* Prevent image dragging / ghost */
 document.addEventListener('dragstart', e => e.preventDefault());
 document.addEventListener('contextmenu', e => e.preventDefault());
 
 async function openPDF(url) {
-  // show overlay
   reader.style.display = 'flex';
   reader.setAttribute('aria-hidden','false');
-  // prevent background scroll and optionally hide the grid so the webview doesn't keep focus on it
   document.body.style.overflow = 'hidden';
   volumeList.style.display = 'none';
-  // try to load
+
   try {
     const loadingTask = pdfjsLib.getDocument(url);
     pdfDoc = await loadingTask.promise;
     pageNum = 1;
     renderPage(pageNum);
   } catch (err) {
-    // on failure, clear canvas, show page info and leave overlay open so user can close
     ctx.clearRect(0,0,canvas.width, canvas.height);
     pageInfo.innerText = "Failed to load PDF";
-    console.error('PDF load error:', err);
   }
 }
 
@@ -319,15 +331,11 @@ function renderPage(num) {
   if (!pdfDoc) return;
   pdfDoc.getPage(num).then(page => {
     const viewport = page.getViewport({ scale });
-    // fit canvas to viewport
     canvas.width = viewport.width;
     canvas.height = viewport.height;
-    // render
-    const renderContext = { canvasContext: ctx, viewport: viewport };
-    page.render(renderContext);
+
+    page.render({ canvasContext: ctx, viewport });
     pageInfo.innerText = `${num} / ${pdfDoc.numPages}`;
-  }).catch(err => {
-    console.error('render error', err);
   });
 }
 
@@ -348,17 +356,15 @@ function nextPage() {
 function closePDF() {
   reader.style.display = 'none';
   reader.setAttribute('aria-hidden','true');
-  // restore content and scroll
   volumeList.style.display = '';
   document.body.style.overflow = 'auto';
-  // clear canvas
+
   if (ctx) ctx.clearRect(0,0,canvas.width, canvas.height);
   pdfDoc = null;
   pageNum = 1;
   pageInfo.innerText = '';
 }
 
-/* preserve scroll position between navigations exactly like PhantomBlood */
 const SCROLL_KEY = 'scroll_part3';
 document.addEventListener('DOMContentLoaded', () => {
   const saved = localStorage.getItem(SCROLL_KEY);
@@ -368,7 +374,7 @@ window.addEventListener('scroll', () => {
   localStorage.setItem(SCROLL_KEY, window.scrollY);
 });
 
-function goHome(){
+function goHome() {
   window.location.href = 'https://penyu444.github.io/JojosBizarreAdventureStorage/JojosBizarreAdventure.html';
 }
 </script>
