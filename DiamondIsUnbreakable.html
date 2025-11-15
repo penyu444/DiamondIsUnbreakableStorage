@@ -6,312 +6,303 @@
 <title>Part 4 - Diamond Is Unbreakable</title>
 
 <style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f2d9ff; /* light purple */
-    color: #000;
-    overflow-y: scroll;
-  }
+    body { 
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f2d9ff; /* light purple */
+        color: #000;
+        overflow-y: scroll;
+    }
 
-  .header {
-    text-align: center;
-    padding: 20px;
-    background: #3a0066; /* dark purple */
-    font-size: 26px;
-    font-weight: bold;
-    color: pink;
-  }
+    .header {
+        text-align: center;
+        padding: 20px;
+        background: #3a0066; /* dark purple */
+        font-size: 26px;
+        font-weight: bold;
+        color: pink;
+    }
 
-  .back-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin: 15px 0;
-  }
+    .back-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin: 15px 0;
+    }
 
-  .back-btn {
-    background: #3a0066;
-    color: pink;
-    padding: 10px 18px;
-    border-radius: 8px;
-    cursor: pointer;
-    border: 1px solid pink;
-    transition: 0.2s;
-  }
+    .back-btn {
+        background: #3a0066;
+        color: pink;
+        padding: 10px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        border: 1px solid pink;
+        transition: 0.2s;
+    }
 
-  .back-btn:hover {
-    background: #50008f;
-  }
+    .back-btn:hover {
+        background: #50008f;
+    }
 
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
-    padding: 20px;
-  }
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+        padding: 20px;
+    }
 
-  .volume-card {
-    background: #fff;
-    border: 2px solid rgb(250, 49, 83);
-    border-radius: 12px;
-    padding: 12px;
-    text-align: center;
-    cursor: pointer;
-    transition: 0.25s;
-    box-shadow: 0 0 0px transparent;
-  }
+    .volume-card {
+        background: #fff;
+        border: 2px solid rgb(250, 49, 83);
+        border-radius: 12px;
+        padding: 12px;
+        text-align: center;
+        cursor: pointer;
+        transition: 0.25s;
+        box-shadow: 0 0 0px transparent;
+    }
 
-  .volume-card:hover {
-    box-shadow: 0 0 12px rgba(0, 255, 255, 0.6); /* cyan glow */
-    transform: translateY(-3px);
-  }
+    .volume-card:hover {
+        box-shadow: 0 0 12px rgba(0, 255, 255, 0.6);
+        transform: translateY(-3px);
+    }
 
-  .thumbnail {
-    width: 100%;
-    height: 330px;
-    object-fit: cover;
-    border-radius: 10px;
-  }
+    .thumbnail {
+        width: 100%;
+        height: 330px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
 
-  .volume-title {
-    margin-top: 12px;
-    font-size: 16px;
-    color: #3a0066;
-    font-weight: bold;
-  }
+    .volume-title {
+        margin-top: 12px;
+        font-size: 16px;
+        color: #3a0066;
+        font-weight: bold;
+    }
 
-  /* --- NEW PDF READER STYLE (tap zones) --- */
-  #reader {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.95);
-    display: none;
-    flex-direction: column;
-    z-index: 9999;
-  }
+    /* Reader overlay */
+    #reader {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.95);
+        display: none;
+        flex-direction: column;
+        z-index: 9999;
+    }
 
-  #pdf-canvas {
-    margin: auto;
-    max-width: 100%;
-    max-height: 100%;
-  }
+    #pdf-canvas {
+        margin: auto;
+        max-width: 100%;
+        max-height: 100%;
+    }
 
-  /* Tap zones */
-  .tap-zone {
-    position: absolute;
-    top: 0;
-    height: 100%;
-    width: 33.33%;
-    cursor: pointer;
-  }
+    /* Tap zones */
+    .tap-zone {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: 33.33%;
+        cursor: pointer;
+    }
 
-  #left-zone { left: 0; }
-  #center-zone { left: 33.33%; }
-  #right-zone { right: 0; }
+    #left-zone { left: 0; }
+    #center-zone { left: 33.33%; }
+    #right-zone { right: 0; }
 
-  #close-btn {
-    position: absolute;
-    top: 15px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #3a0066;
-    color: pink;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 16px;
-  }
-
+    #close-btn {
+        position: absolute;
+        top: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #3a0066;
+        color: pink;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        z-index: 10000;
+    }
 </style>
 
-<!-- PDF.js -->
 <script src="../pdfjs/pdf.js"></script>
 
 <script>
-let pdfDoc = null,
-    pageNum = 1,
-    scale = 1.5,
-    canvas = null,
-    ctx = null;
+let pdfDoc = null;
+let pageNum = 1;
+let scale = 1.5;
+let canvas, ctx;
 
 document.addEventListener("DOMContentLoaded", () => {
-  canvas = document.getElementById("pdf-canvas");
-  ctx = canvas.getContext("2d");
+    canvas = document.getElementById("pdf-canvas");
+    ctx = canvas.getContext("2d");
 });
 
 function openPDF(url) {
-  document.getElementById("reader").style.display = "flex";
-  document.body.style.overflow = "hidden";
+    document.getElementById("reader").style.display = "flex";
+    document.body.style.overflow = "hidden";
 
-  pdfjsLib.getDocument(url).promise.then((doc) => {
-    pdfDoc = doc;
-    pageNum = 1;
-    renderPage(pageNum);
-  });
+    pdfjsLib.getDocument(url).promise.then((doc) => {
+        pdfDoc = doc;
+        pageNum = 1;
+        renderPage(pageNum);
+    });
 }
 
 function closePDF() {
-  document.getElementById("reader").style.display = "none";
-  document.body.style.overflow = "auto";
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  pdfDoc = null;
+    document.getElementById("reader").style.display = "none";
+    document.body.style.overflow = "auto";
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pdfDoc = null;
 }
 
 function renderPage(num) {
-  pdfDoc.getPage(num).then((page) => {
-    const viewport = page.getViewport({ scale });
+    pdfDoc.getPage(num).then((page) => {
+        const viewport = page.getViewport({ scale });
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
 
-    canvas.height = viewport.height;
-    canvas.width = viewport.width;
-
-    page.render({
-      canvasContext: ctx,
-      viewport
+        page.render({
+            canvasContext: ctx,
+            viewport
+        });
     });
-  });
 }
 
-/* TAP ZONE NAVIGATION */
+/* Tap-zone nav */
 document.getElementById("left-zone").onclick = () => {
-  if (!pdfDoc) return;
-  if (pageNum > 1) {
-    pageNum--;
-    renderPage(pageNum);
-  }
+    if (pdfDoc && pageNum > 1) {
+        pageNum--;
+        renderPage(pageNum);
+    }
 };
 
 document.getElementById("right-zone").onclick = () => {
-  if (!pdfDoc) return;
-  if (pageNum < pdfDoc.numPages) {
-    pageNum++;
-    renderPage(pageNum);
-  }
+    if (pdfDoc && pageNum < pdfDoc.numPages) {
+        pageNum++;
+        renderPage(pageNum);
+    }
 };
 
 document.getElementById("center-zone").onclick = () => {
-  closePDF();
+    closePDF();
 };
 </script>
-
 </head>
 <body>
 
 <div class="header">Part 4 — Diamond Is Unbreakable</div>
 
 <div class="back-buttons">
-  <div class="back-btn" onclick="goHome()">← Back</div>
+    <div class="back-btn" onclick="history.back()">← Back</div>
 </div>
 
 <div class="grid">
 
-  <!-- GENERATED VOLUME CARDS BELOW -->
+    <!-- Your provided volumes (unchanged) -->
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 29 - Enter Josuke Higashikata.pdf')">
-    <img class="thumbnail" src="vol29cover.png">
-    <div class="volume-title">DiamondIsUnbreakable Volume 29</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 29 - Enter Josuke Higashikata.pdf')">
+        <img class="thumbnail" src="vol29cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 29</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 30 - Okuyasu and Keicho Nijimura.pdf')">
-    <img class="thumbnail" src="vol30cover.png">
-    <div class="volume-title">DiamondIsUnbreakable Volume 30</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 30 - Okuyasu and Keicho Nijimura.pdf')">
+        <img class="thumbnail" src="vol30cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 30</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 31 - Koichi Hirose (Echoes).pdf')">
-    <img class="thumbnail" src="vol31cover.png">
-    <div class="volume-title">DiamondIsUnbreakable Volume 31</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 31 - Koichi Hirose (Echoes).pdf')">
+        <img class="thumbnail" src="vol31cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 31</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 32 - Yamagishi Yukako is in Love.pdf')">
-    <img class="thumbnail" src="vol32cover.png">
-    <div class="volume-title">DiamondIsUnbreakable Volume 32</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 32 - Yamagishi Yukako is in Love.pdf')">
+        <img class="thumbnail" src="vol32cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 32</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 33 - Let_s Go Out For Italian.pdf')">
-    <img class="thumbnail" src="vol33cover.png">
-    <div class="volume-title">DiamondIsUnbreakable Volume 33</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 33 - Let_s Go Out For Italian.pdf')">
+        <img class="thumbnail" src="vol33cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 33</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 34 - Let_s Go Play at the Mangaka_s House.pdf')">
-    <img class="thumbnail" src="vol34cover.png">
-    <div class="volume-title">DiamondIsUnbreakable Volume 34</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 34 - Let_s Go Play at the Mangaka_s House.pdf')">
+        <img class="thumbnail" src="vol34cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 34</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 35 - Kishibe Rohan_s Adventure.pdf')">
-    <img class="thumbnail" src="vol35cover.png">
-    <div class="volume-title">DiamondIsUnbreakable Volume 35</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 35 - Kishibe Rohan_s Adventure.pdf')">
+        <img class="thumbnail" src="vol35cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 35</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 36 - Shigechi_s Harvest.pdf')">
-    <img class="thumbnail" src="vol36cover.png">
-    <div class="volume-title">DiamondIsUnbreakable Volume 36</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 36 - Shigechi_s Harvest.pdf')">
+        <img class="thumbnail" src="vol36cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 36</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 37 - Yoshikage Kira Wants a Quiet Life.pdf')">
-    <img class="thumbnail" src="vol37cover.png">
-    <div class="volume-title">DiamondIsUnbreakable Volume 37</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 37 - Yoshikage Kira Wants a Quiet Life.pdf')">
+        <img class="thumbnail" src="vol37cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 37</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 38 - Sheer Heart Attack.pdf')">
-    <img class="thumbnail" src="vol38cover.png">
-    <div class="volume-title">DiamondIsUnbreakable Volume 38</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 38 - Sheer Heart Attack.pdf')">
+        <img class="thumbnail" src="vol38cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 38</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 39 - Father_s Tears.pdf')">
-    <img class="thumbnail" src="vol39cover.png">
-    <div class="volume-title">DiamondIsUnbreakable Volume 39</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 39 - Father_s Tears.pdf')">
+        <img class="thumbnail" src="vol39cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 39</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 40 - RPS Kid is Coming!.pdf')">
-    <img class="thumbnail" src="vol40cover.png">
-    <div class="volume-title">DiamondIsUnbreakable Volume 40</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 40 - RPS Kid is Coming!.pdf')">
+        <img class="thumbnail" src="vol40cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 40</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 41 - Highway Star.pdf')">
-    <img class="thumbnail" src="vol41cover.png">
-    <div class="volume-title">DiamondIsUnbreakable Volume 41</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 41 - Highway Star.pdf')">
+        <img class="thumbnail" src="vol41cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 41</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 42 - The Cat Likes Yoshikage Kira.pdf')">
-    <img class="thumbnail" src="vol42cover.png">
-    <div class="volume-title">DiamondIsUnbreakable Volume 42</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 42 - The Cat Likes Yoshikage Kira.pdf')">
+        <img class="thumbnail" src="vol42cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 42</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 43 - Enigma is a Mystery!.pdf')">
-    <img class="thumbnail" src="vol43cover.png">
-    <div class="volume-title">DiamondIsUnbreakable Volume 43</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 43 - Enigma is a Mystery!.pdf')">
+        <img class="thumbnail" src="vol43cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 43</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 44 - My Dad is Not My Dad.pdf')">
-    <img class="thumbnail" src="vol44cover.png">
-    <div class="volume-title">DiamondIsUnbreakable Volume 44</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 44 - My Dad is Not My Dad.pdf')">
+        <img class="thumbnail" src="vol44cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 44</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 45 - Another One Bites The Dust.pdf')">
-    <img class="thumbnail" src="vol45cover.png">
-    <div class="volume-title">DiamondIsUnbreakable Volume 45</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 45 - Another One Bites The Dust.pdf')">
+        <img class="thumbnail" src="vol45cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 45</div>
+    </div>
 
-  <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 46 - Crazy Diamond is Unbreakable.pdf')">
-    <img class="thumbnail" src="vol46cover.png">
-    <div class="volume-title">DiamondIsUnbreakable Volume 46</div>
-  </div>
+    <div class="volume-card" onclick="openPDF('JoJo_s Bizzare Adventure - Part 4 - Volume 46 - Crazy Diamond is Unbreakable.pdf')">
+        <img class="thumbnail" src="vol46cover.png">
+        <div class="volume-title">DiamondIsUnbreakable Volume 46</div>
+    </div>
 
 </div>
 
 <div id="reader">
 
-  <!-- Tap Zones -->
-  <div id="left-zone" class="tap-zone"></div>
-  <div id="center-zone" class="tap-zone"></div>
-  <div id="right-zone" class="tap-zone"></div>
+    <div id="left-zone" class="tap-zone"></div>
+    <div id="center-zone" class="tap-zone"></div>
+    <div id="right-zone" class="tap-zone"></div>
 
-  <!-- Close Button -->
-  <div id="close-btn">Close</div>
+    <div id="close-btn" onclick="closePDF()">Close</div>
 
-  <!-- Canvas -->
-  <canvas id="pdf-canvas"></canvas>
+    <canvas id="pdf-canvas"></canvas>
 </div>
-
 
 </body>
 </html>
